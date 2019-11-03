@@ -1,6 +1,9 @@
 #ifndef LINKEDLISTCLASS_LINKEDLIST_H
 #define LINKEDLISTCLASS_LINKEDLIST_H
 
+#include <iostream>
+using namespace std;
+
 template<typename T> class LinkedList {
 public:
     struct Node {
@@ -18,6 +21,7 @@ public:
     void removeLast();
     T get(int index);
     int count();
+    void insertAtIndex(T val, int index);
 
 private:
     void actuallyRemoveIndex(int index);
@@ -29,6 +33,8 @@ private:
 };
 #endif //LINKEDLISTCLASS_LINKEDLIST_H
 
+
+// ----Start class implementation----
 template<typename T>
 LinkedList<T>::LinkedList() {
     root = nullptr;
@@ -42,20 +48,19 @@ LinkedList<T>::~LinkedList() {
 
 template<typename T>
 LinkedList<T>::LinkedList(T val) {
-    Node newHead = {val, nullptr};
-    root = &newHead;
+    root = nullptr;
     tail = nullptr;
-    size++;
+    append(val);
 }
 
 template<typename T>
 void LinkedList<T>::printAll() {
     if (size == 0) {
-        printf("No list items to print.\n");
+        cout << "No list items to print." << endl;
     } else {
-        printf("List at current time:\n");
+        cout << "List at current time:" << endl;
         for (Node *walk = root; walk != nullptr; walk = walk->ptr) {
-            printf("%d\n", walk->val);
+            cout << walk->val << endl;
         }
     }
 }
@@ -104,14 +109,14 @@ void LinkedList<T>::append(T val) {
 template<typename T>
 void LinkedList<T>::remove(int index) {
     if (size == 0) {
-        printf("There are no items to remove.\n");
+        cout << "There are no items to remove." << endl;
     } else {
         if (index == 0) {
             removeFirst();
         } else {
             index = (index < 0) ? size + index : index; // Fix negative index so it counts back from end
             if (index > size - 1) {
-                printf("Index out of bounds.  Range: -%d to %d.\n", size-1, size-1);
+                cout << "Index " << index << " requested out of bounds.  Range: -" << size-1 << "to " << size-1 << endl;
             } else if (index == size - 1) {
                 removeLast();
             } else {
@@ -124,7 +129,7 @@ void LinkedList<T>::remove(int index) {
 template<typename T>
 void LinkedList<T>::removeFirst() {
     if (size == 0) {
-        printf("There are no items to remove.\n");
+        cout << "There are no items to remove." << endl;
     } else if (size == 1) {
         free(root);
         root = nullptr;
@@ -147,7 +152,7 @@ void LinkedList<T>::removeFirst() {
 template<typename T>
 void LinkedList<T>::removeLast() {
     if (size == 0) {
-        printf("There are no items to remove.\n");
+        cout << "There are no items to remove." << endl;
     } else if (size == 1) {
         free(root);
         root = nullptr;
@@ -220,7 +225,7 @@ template<typename T>
 T LinkedList<T>::get(int index) {
     index = (index < 0) ? size + index : index; // Fix negative index so it counts back from end
     if (index > size-1) {
-        printf("Index out of bounds.  Range: -%d to %d.\n", size-1, size-1);
+        cout << "Index " << index << " requested out of bounds.  Range: -" << size-1 << "to " << size-1 << endl;
         return 0;
     } else {
         signed int i = 0;
