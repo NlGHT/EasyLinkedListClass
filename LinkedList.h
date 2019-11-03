@@ -237,3 +237,29 @@ T LinkedList<T>::get(int index) {
     }
     return 0;
 }
+
+template<typename T>
+void LinkedList<T>::insertAtIndex(T val, int index) {
+    index = (index < 0) ? size + index : index; // Fix negative index so it counts back from end
+    if (index > size) {
+        cout << "Index out of range.  Value not inserted." << endl;
+    } else {
+        if (index == size) {
+            append(val);
+        } else if (index == 0) {
+            appendFront(val);
+        } else {
+            signed int i = 0;
+            for (Node *walk = root; walk; walk = walk->ptr, i++) {
+                if (i == index - 1) {
+                    Node *newNode = createNewNodeWithVal(val);
+                    Node *tempWalk = walk;
+                    walk = walk->ptr;
+                    tempWalk->ptr = newNode;
+                    newNode->ptr = walk;
+                    break;
+                }
+            }
+        }
+    }
+}
