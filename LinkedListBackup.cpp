@@ -3,25 +3,27 @@
 #include "LinkedList.h"
 
 using namespace std;
-typedef LinkedList::Node* NodePtr;
-
-LinkedList::LinkedList() {
+template<typename T>
+LinkedList<T>::LinkedList() {
     root = nullptr;
     tail = nullptr;
 }
 
-LinkedList::~LinkedList() {
+template<typename T>
+LinkedList<T>::~LinkedList() {
     deleteAll();
 }
 
-LinkedList::LinkedList(int val) {
+template<typename T>
+LinkedList<T>::LinkedList(T val) {
     Node newHead = {val, nullptr};
     root = &newHead;
-    tail = &newHead;
+    tail = nullptr;
     size++;
 }
 
-void LinkedList::printAll() {
+template<typename T>
+void LinkedList<T>::printAll() {
     if (size == 0) {
         printf("No list items to print.\n");
     } else {
@@ -32,11 +34,13 @@ void LinkedList::printAll() {
     }
 }
 
-int LinkedList::count() {
+template<typename T>
+int LinkedList<T>::count() {
     return size;
 }
 
-void LinkedList::appendFront(int val) {
+template<typename T>
+void LinkedList<T>::appendFront(T val) {
     Node* newHead = createNewNodeWithVal(val);
     if (size == 0) {
         newHead->val = val;
@@ -55,7 +59,8 @@ void LinkedList::appendFront(int val) {
     size++;
 }
 
-void LinkedList::append(int val) {
+template<typename T>
+void LinkedList<T>::append(T val) {
     Node* newTail = createNewNodeWithVal(val);
     if (size == 0) {
         root = newTail;
@@ -70,7 +75,8 @@ void LinkedList::append(int val) {
     size++;
 }
 
-void LinkedList::remove(int index) {
+template<typename T>
+void LinkedList<T>::remove(int index) {
     if (size == 0) {
         printf("There are no items to remove.\n");
     } else {
@@ -89,7 +95,8 @@ void LinkedList::remove(int index) {
     }
 }
 
-void LinkedList::removeFirst() {
+template<typename T>
+void LinkedList<T>::removeFirst() {
     if (size == 0) {
         printf("There are no items to remove.\n");
     } else if (size == 1) {
@@ -111,7 +118,8 @@ void LinkedList::removeFirst() {
     }
 }
 
-void LinkedList::removeLast() {
+template<typename T>
+void LinkedList<T>::removeLast() {
     if (size == 0) {
         printf("There are no items to remove.\n");
     } else if (size == 1) {
@@ -137,7 +145,8 @@ void LinkedList::removeLast() {
     }
 }
 
-void LinkedList::actuallyRemoveIndex(int index) {
+template<typename T>
+void LinkedList<T>::actuallyRemoveIndex(int index) {
     signed int i = 0;
     for (Node* walk = root; walk; walk = walk->ptr, i++) {
         if (i == index-1) {
@@ -151,7 +160,8 @@ void LinkedList::actuallyRemoveIndex(int index) {
     }
 }
 
-LinkedList::Node *LinkedList::createNewNodeWithVal(int val) {
+template<typename T>
+typename LinkedList<T>::Node *LinkedList<T>::createNewNodeWithVal(T val) {
     Node *newTail;
     newTail = static_cast<Node *>(malloc(sizeof(Node)));
     newTail->val = val;
@@ -159,7 +169,8 @@ LinkedList::Node *LinkedList::createNewNodeWithVal(int val) {
     return newTail;
 }
 
-void LinkedList::deleteAll() {
+template<typename T>
+void LinkedList<T>::deleteAll() {
     if (size > 0) {
         Node* walk = root;
         while (true) {
@@ -179,7 +190,8 @@ void LinkedList::deleteAll() {
     }
 }
 
-int LinkedList::get(int index) {
+template<typename T>
+T LinkedList<T>::get(int index) {
     index = (index < 0) ? size + index : index; // Fix negative index so it counts back from end
     if (index > size-1) {
         printf("Index out of bounds.  Range: -%d to %d.\n", size-1, size-1);
@@ -192,4 +204,5 @@ int LinkedList::get(int index) {
             }
         }
     }
+    return 0;
 }
