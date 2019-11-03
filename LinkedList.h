@@ -2,6 +2,11 @@
 #define LINKEDLISTCLASS_LINKEDLIST_H
 
 #include <iostream>
+#include <stdexcept>
+#include <cmath>
+#include <cstring>
+#include <cassert>
+
 using namespace std;
 
 template<typename T> class LinkedList {
@@ -27,6 +32,8 @@ private:
     void actuallyRemoveIndex(int index);
     Node* createNewNodeWithVal(T val);
     void deleteAll();
+    void throwOOBException(int indexRequested);
+    void intToString(int val, char* outString, int length);
     Node* root;
     Node* tail;
     int size = 0;
@@ -55,13 +62,10 @@ LinkedList<T>::LinkedList(T val) {
 
 template<typename T>
 void LinkedList<T>::printAll() {
-    if (size == 0) {
-        cout << "No list items to print." << endl;
-    } else {
-        cout << "List at current time:" << endl;
-        for (Node *walk = root; walk != nullptr; walk = walk->ptr) {
-            cout << walk->val << endl;
-        }
+    assert(size > 0);
+    cout << "List at current time:" << endl;
+    for (Node *walk = root; walk != nullptr; walk = walk->ptr) {
+        cout << walk->val << endl;
     }
 }
 
@@ -108,29 +112,25 @@ void LinkedList<T>::append(T val) {
 
 template<typename T>
 void LinkedList<T>::remove(int index) {
-    if (size == 0) {
-        cout << "There are no items to remove." << endl;
+    assert(size > 0);
+    if (index == 0) {
+        removeFirst();
     } else {
-        if (index == 0) {
-            removeFirst();
+        index = (index < 0) ? size + index : index; // Fix negative index so it counts back from end
+        if (index > size - 1) {
+            throwOOBException(index);
+        } else if (index == size - 1) {
+            removeLast();
         } else {
-            index = (index < 0) ? size + index : index; // Fix negative index so it counts back from end
-            if (index > size - 1) {
-                cout << "Index " << index << " requested out of bounds.  Range: -" << size-1 << "to " << size-1 << endl;
-            } else if (index == size - 1) {
-                removeLast();
-            } else {
-                actuallyRemoveIndex(index);
-            }
+            actuallyRemoveIndex(index);
         }
     }
 }
 
 template<typename T>
 void LinkedList<T>::removeFirst() {
-    if (size == 0) {
-        cout << "There are no items to remove." << endl;
-    } else if (size == 1) {
+    assert(size > 0);
+    if (size == 1) {
         free(root);
         root = nullptr;
         tail = nullptr;
@@ -151,9 +151,8 @@ void LinkedList<T>::removeFirst() {
 
 template<typename T>
 void LinkedList<T>::removeLast() {
-    if (size == 0) {
-        cout << "There are no items to remove." << endl;
-    } else if (size == 1) {
+    assert(size > 0);
+    if (size == 1) {
         free(root);
         root = nullptr;
         tail = nullptr;
@@ -225,8 +224,8 @@ template<typename T>
 T LinkedList<T>::get(int index) {
     index = (index < 0) ? size + index : index; // Fix negative index so it counts back from end
     if (index > size-1) {
-        cout << "Index " << index << " requested out of bounds.  Range: -" << size-1 << "to " << size-1 << endl;
-        return 0;
+        throwOOBException(index);
+        return -1;
     } else {
         signed int i = 0;
         for (Node *walk = root; walk; walk = walk->ptr, i++) {
@@ -242,7 +241,7 @@ template<typename T>
 void LinkedList<T>::insertAtIndex(T val, int index) {
     index = (index < 0) ? size + index : index; // Fix negative index so it counts back from end
     if (index > size) {
-        cout << "Index out of range.  Value not inserted." << endl;
+        throwOOBException(index);
     } else {
         if (index == size) {
             append(val);
@@ -260,6 +259,62 @@ void LinkedList<T>::insertAtIndex(T val, int index) {
                     break;
                 }
             }
+        }
+    }
+}
+
+template<typename T>
+void LinkedList<T>::throwOOBException(int indexRequested) {
+    if (indexRequested == 0) {
+        char zero = '0';
+    } else {
+        int indexDigits = floor(log10(abs(indexRequested))) + 1;
+        if (indexRequested < 0) {
+            indexDigits += 1;
+        }
+        const int indexDigitsForArrayLength = indexDigits;
+        char stringConvertedIndexRequested[indexDigitsForArrayLength];
+        intToString(indexRequested, stringConvertedIndexRequested, indexDigitsForArrayLength);
+        if (size == 0) {
+            throw out_of_range("There are no items in the list.");
+        } else {
+            char partOne[] = "Index ";
+            const int sizeAsStringLength = floor(log10(abs(size-1))) + 1;
+            char sizeAsString[sizeAsStringLength];
+            intToString(size-1, sizeAsString, sizeAsStringLength);
+            char partThree[] = " requested is out of bounds.  Range: -";
+            char partFive[] = " to ";
+            char partSeven[] = ".";
+            const int errorMessageLength = (
+                    strlen(partOne) +
+                    strlen(stringConvertedIndexRequested) +
+                    strlen(partThree) +
+                    strlen(sizeAsString) +
+                    strlen(partFive) +
+                    strlen(sizeAsString) +
+                    strlen(partSeven));
+            char errorMessage[errorMessageLength];
+            strcat(errorMessage, partOne);
+            strcat(errorMessage, stringConvertedIndexRequested);
+            strcat(errorMessage, partThree);
+            strcat(errorMessage, sizeAsString);
+            strcat(errorMessage, partFive);
+            strcat(errorMessage, sizeAsString);
+            strcat(errorMessage, partSeven);
+            throw out_of_range(errorMessage);
+        }
+    }
+}
+
+template<typename T>
+void LinkedList<T>::intToString(int val, char *outString, const int length) {
+    if (val == 0) {
+        outString[0] = '0';
+    } else {
+        if (val < 0) {
+            sprintf(outString, "%s%d", "-", val);
+        } else {
+            sprintf(outString, "%d", val);
         }
     }
 }

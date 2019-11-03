@@ -45,5 +45,6 @@ int main() {
     cout << linkedList.get(0) << endl;
     linkedList.insertAtIndex(9000, 2);
     linkedList.printAll();
+    linkedList.get(4);
     return 0;
 }
