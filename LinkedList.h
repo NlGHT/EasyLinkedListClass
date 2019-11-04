@@ -278,22 +278,22 @@ void LinkedList<T>::throwOOBException(int indexRequested) {
         if (size == 0) {
             throw out_of_range("There are no items in the list.");
         } else {
-            char partOne[] = "Index ";
+            const char partOne[] = "Index ";
             const int sizeAsStringLength = floor(log10(abs(size-1))) + 1;
             char sizeAsString[sizeAsStringLength];
             intToString(size-1, sizeAsString, sizeAsStringLength);
-            char partThree[] = " requested is out of bounds.  Range: -";
-            char partFive[] = " to ";
-            char partSeven[] = ".";
+            const char partThree[] = " requested is out of bounds.  Range: -";
+            const char partFive[] = " to ";
+            const char partSeven[] = ".";
             const int errorMessageLength = (
                     strlen(partOne) +
-                    strlen(stringConvertedIndexRequested) +
+                    indexDigitsForArrayLength +
                     strlen(partThree) +
-                    strlen(sizeAsString) +
+                    sizeAsStringLength +
                     strlen(partFive) +
-                    strlen(sizeAsString) +
+                    sizeAsStringLength +
                     strlen(partSeven));
-            char errorMessage[errorMessageLength];
+            char errorMessage[errorMessageLength] = "";
             strcat(errorMessage, partOne);
             strcat(errorMessage, stringConvertedIndexRequested);
             strcat(errorMessage, partThree);
@@ -301,6 +301,7 @@ void LinkedList<T>::throwOOBException(int indexRequested) {
             strcat(errorMessage, partFive);
             strcat(errorMessage, sizeAsString);
             strcat(errorMessage, partSeven);
+            deleteAll();
             throw out_of_range(errorMessage);
         }
     }
