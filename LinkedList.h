@@ -4,8 +4,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <cmath>
-#include <cstring>
 #include <cassert>
+#include <string>
 
 using namespace std;
 
@@ -33,7 +33,6 @@ private:
     Node* createNewNodeWithVal(T val);
     void deleteAll();
     void throwOOBException(int indexRequested);
-    void intToString(int val, char* outString, int length);
     Node* root;
     Node* tail;
     int size = 0;
@@ -265,57 +264,18 @@ void LinkedList<T>::insertAtIndex(T val, int index) {
 
 template<typename T>
 void LinkedList<T>::throwOOBException(int indexRequested) {
-    if (indexRequested == 0) {
-        char zero = '0';
-    } else {
-        int indexDigits = floor(log10(abs(indexRequested))) + 1;
-        if (indexRequested < 0) {
-            indexDigits += 1;
-        }
-        const int indexDigitsForArrayLength = indexDigits;
-        char stringConvertedIndexRequested[indexDigitsForArrayLength];
-        intToString(indexRequested, stringConvertedIndexRequested, indexDigitsForArrayLength);
-        if (size == 0) {
-            throw out_of_range("There are no items in the list.");
-        } else {
-            const char partOne[] = "Index ";
-            const int sizeAsStringLength = floor(log10(abs(size-1))) + 1;
-            char sizeAsString[sizeAsStringLength];
-            intToString(size-1, sizeAsString, sizeAsStringLength);
-            const char partThree[] = " requested is out of bounds.  Range: -";
-            const char partFive[] = " to ";
-            const char partSeven[] = ".";
-            const int errorMessageLength = (
-                    strlen(partOne) +
-                    indexDigitsForArrayLength +
-                    strlen(partThree) +
-                    sizeAsStringLength +
-                    strlen(partFive) +
-                    sizeAsStringLength +
-                    strlen(partSeven));
-            char errorMessage[errorMessageLength] = "";
-            strcat(errorMessage, partOne);
-            strcat(errorMessage, stringConvertedIndexRequested);
-            strcat(errorMessage, partThree);
-            strcat(errorMessage, sizeAsString);
-            strcat(errorMessage, partFive);
-            strcat(errorMessage, sizeAsString);
-            strcat(errorMessage, partSeven);
-            deleteAll();
-            throw out_of_range(errorMessage);
-        }
-    }
-}
-
-template<typename T>
-void LinkedList<T>::intToString(int val, char *outString, const int length) {
-    if (val == 0) {
-        outString[0] = '0';
-    } else {
-        if (val < 0) {
-            sprintf(outString, "%s%d", "-", val);
-        } else {
-            sprintf(outString, "%d", val);
-        }
+    string errorBuilder;
+    if (indexRequested >= size) {
+        errorBuilder.append("Index ");
+        errorBuilder.append(to_string(indexRequested));
+        errorBuilder.append(" requested is out of bounds.  Range: -");
+        errorBuilder.append(to_string(size - 1));
+        errorBuilder.append(" to ");
+        errorBuilder.append(to_string(size - 1));
+        errorBuilder.append(".");
+        deleteAll();
+        throw out_of_range(errorBuilder);
+    } else if (size == 0) {
+        errorBuilder.append("Attempted to access list when there was no items.");
     }
 }
