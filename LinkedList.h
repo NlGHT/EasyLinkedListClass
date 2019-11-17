@@ -266,16 +266,16 @@ template<typename T>
 void LinkedList<T>::throwOOBException(int indexRequested) {
     string errorBuilder;
     if (indexRequested >= size) {
-        errorBuilder.append("Index ");
-        errorBuilder.append(to_string(indexRequested));
-        errorBuilder.append(" requested is out of bounds.  Range: -");
-        errorBuilder.append(to_string(size - 1));
-        errorBuilder.append(" to ");
-        errorBuilder.append(to_string(size - 1));
-        errorBuilder.append(".");
+        errorBuilder += "Index ";
+        errorBuilder += to_string(indexRequested);
+        errorBuilder += " requested is out of bounds.  Range: -";
+        errorBuilder += to_string(size - 1);
+        errorBuilder += " to ";
+        errorBuilder += to_string(size - 1);
+        errorBuilder += ".";
         deleteAll();
         throw out_of_range(errorBuilder);
     } else if (size == 0) {
-        errorBuilder.append("Attempted to access list when there was no items.");
+        errorBuilder += "Attempted to access list when there was no items.";
     }
 }
